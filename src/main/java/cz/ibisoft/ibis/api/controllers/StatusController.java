@@ -12,6 +12,6 @@ public class StatusController {
 
     @RequestMapping("/ping")
     public Status ping() {
-        return new Status("OK");
+        return new Status("Pong");
     }
 }
