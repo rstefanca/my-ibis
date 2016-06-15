@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: http://ibis.ibisoft.cz/
+HOST: https://my-ibis.herokuapp.com
 
 # Ibis
 
@@ -24,27 +24,19 @@ Vrací detail konkrétního pacienta.
 Tato akce vrací kód 200 a JSON objekt reprezentující pacienta.
 
 + Parameters
-    + pacient_id (guid) - ID pacienta
+    + pacient_id (required, guid) - ID pacienta
     
-+ Response 200 (application/json)
-    
-    + Schema
-    
-            {
-                "$schema": "http://json-schema.org/draft-04/schema#",
-                "description": "Nacteni pacienta",
-                "type": "object",
-                "properties": {
-                    "CP": {
-                        "type": "string",
-                        "description": "Cislo pojistence",
-                        "pattern": "^[0-9]{9,10}$"
-                    }
-                }
-            }
++ Response 200 (application/json;charset=UTF-8)
+
+    + Attributes (Pacient)
             
-    + Body
-            
-            {
-                "CP": "85030955664"
-            }
+    
+# Data Structures
+
+## Pacient (object)
++ cp: 1122334455 (required, string)
++ adresa (Adresa)
+
+## Adresa (object)
++ ulice: Pernerova (required)
++ cisloPopisne: 444 (required, string)
