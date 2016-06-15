@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -jar target/ibis-rest-service.jar
+web: java -Dserver.port=$PORT -jar target/ibis-rest-service-0.1.0.jar
