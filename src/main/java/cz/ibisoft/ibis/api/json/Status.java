@@ -1,4 +1,4 @@
-package cz.ibisoft.ibis.api.protocol;
+package cz.ibisoft.ibis.api.json;
 
 /**
  * @author Richard Stefanca

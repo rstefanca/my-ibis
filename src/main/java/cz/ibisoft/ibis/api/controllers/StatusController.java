@@ -1,6 +1,6 @@
 package cz.ibisoft.ibis.api.controllers;
 
-import cz.ibisoft.ibis.api.protocol.Status;
+import cz.ibisoft.ibis.api.json.Status;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
