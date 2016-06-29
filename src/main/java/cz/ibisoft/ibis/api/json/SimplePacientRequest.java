@@ -3,14 +3,12 @@ package cz.ibisoft.ibis.api.json;
 /**
  * @author Richard Stefanca
  */
-public class PacientRequest {
+public class SimplePacientRequest {
 
     private String cp;
     private String jmena;
     private String prijmeni;
     private Kontakt kontakt;
-    private Hesla hesla;
-    private NastaveniUctu nastaveniUctu;
 
     public String getCp() {
         return cp;
@@ -44,19 +42,5 @@ public class PacientRequest {
         this.kontakt = kontakt;
     }
 
-    public Hesla getHesla() {
-        return hesla;
-    }
 
-    public void setHesla(Hesla hesla) {
-        this.hesla = hesla;
-    }
-
-    public NastaveniUctu getNastaveniUctu() {
-        return nastaveniUctu;
-    }
-
-    public void setNastaveniUctu(NastaveniUctu nastaveniUctu) {
-        this.nastaveniUctu = nastaveniUctu;
-    }
 }

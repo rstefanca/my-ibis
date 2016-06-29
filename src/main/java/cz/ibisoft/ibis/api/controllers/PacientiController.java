@@ -1,9 +1,6 @@
 package cz.ibisoft.ibis.api.controllers;
 
-import cz.ibisoft.ibis.api.json.NastaveniUctuBuilder;
-import cz.ibisoft.ibis.api.json.PacientRequest;
-import cz.ibisoft.ibis.api.json.PacientResponse;
-import cz.ibisoft.ibis.api.json.PacientResponseBuilder;
+import cz.ibisoft.ibis.api.json.*;
 import cz.ibisoft.ibis.api.model.Kontakt;
 import cz.ibisoft.ibis.api.model.NastaveniUctu;
 import cz.ibisoft.ibis.api.model.Pacient;
@@ -33,18 +30,23 @@ public class PacientiController {
         System.out.println(guid);
         Optional<Pacient> maybePacient = pacientService.load(guid);
         return maybePacient
-                .map(pacient -> ResponseEntity
-                        .ok()
-                        .cacheControl(CacheControl.noCache())
-                        .lastModified(pacient.getLastModified().getTime())
-                        .header("X-Version", pacient.getVersion().toString())
-                        .body((Object)createPacientResponse(pacient)))
+                .map(PacientiController::okWithBody)
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    private static ResponseEntity<Object> okWithBody(Pacient pacient) {
+        return ResponseEntity
+                .ok()
+                .cacheControl(CacheControl.noCache())
+                .lastModified(pacient.getLastModified().getTime())
+                .eTag(pacient.getVersion().toString())
+                .header("X-Version", pacient.getVersion().toString())
+                .body((Object)createPacientResponse(pacient));
+    }
+
     @RequestMapping(path = "/pacienti", method = RequestMethod.POST)
-    public HttpEntity<PacientResponse> zalozit(@RequestBody PacientRequest pacientRequest) throws Exception {
-        Pacient pacient = mapToPacient(pacientRequest);
+    public HttpEntity<PacientResponse> zalozit(@RequestBody SimplePacientRequest simplePacientRequest) throws Exception {
+        Pacient pacient = mapToPacient(simplePacientRequest);
         pacientService.create(pacient);
 
         return ResponseEntity
@@ -53,13 +55,29 @@ public class PacientiController {
                 .body(createPacientResponse(pacient));
     }
 
+    @RequestMapping(path = "/pacienti/{guid}", method = RequestMethod.PUT)
+    public HttpEntity<Object> upravit(@PathVariable String guid, @RequestHeader(name = "If-Match", required = true) String versionHeader, @RequestBody SimplePacientRequest simplePacientRequest) {
+        Long version = Long.parseLong(versionHeader);
+        Optional<Pacient> maybePacient = pacientService.load(guid);
+        if (!maybePacient.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Pacient pacient = maybePacient.get();
+        if (!pacient.getVersion().equals(version)) {
+            ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(new Status("Entita byla zmenena"));
+        }
+        pacientService.save(pacient);
+        return okWithBody(pacient);
+    }
+
     @RequestMapping(path = "/pacienti/{guid}", method = RequestMethod.DELETE)
     public HttpEntity<Void> smazat(@PathVariable String guid) {
         return ResponseEntity.noContent().build();
     }
 
     private static PacientResponse createPacientResponse(@RequestBody Pacient pacient) {
-        cz.ibisoft.ibis.api.json.NastaveniUctu nastaveniUctu = createNastaveniUctuResponse(pacient.getNastaveniUctu());
+        cz.ibisoft.ibis.api.json.NastaveniUctu nastaveniUctu = createNastaveniUctuResponse(NastaveniUctu.DEFAULT);
         Kontakt kontakt = pacient.getKontakt();
         return PacientResponseBuilder.aPacientResponse()
                 .withCp(pacient.getCp())
@@ -81,21 +99,14 @@ public class PacientiController {
                 .build();
     }
 
-    private static Pacient mapToPacient(@RequestBody PacientRequest pacientRequest) {
-        cz.ibisoft.ibis.api.json.NastaveniUctu nastaveniUctu = pacientRequest.getNastaveniUctu();
-        cz.ibisoft.ibis.api.json.Kontakt kontakt = pacientRequest.getKontakt();
+    private static Pacient mapToPacient(@RequestBody SimplePacientRequest simplePacientRequest) {
+        cz.ibisoft.ibis.api.json.Kontakt kontakt = simplePacientRequest.getKontakt();
         return new Pacient(
-                pacientRequest.getCp(),
-                pacientRequest.getJmena(),
-                pacientRequest.getPrijmeni(),
+                simplePacientRequest.getCp(),
+                simplePacientRequest.getJmena(),
+                simplePacientRequest.getPrijmeni(),
                 new Kontakt(
                         kontakt.getEmail(),
-                        kontakt.getMobil()),
-                new NastaveniUctu(
-                        nastaveniUctu.getPreferovanaKomunikace(),
-                        nastaveniUctu.getDobaUchovani(),
-                        nastaveniUctu.getPristupNaIdentifikatory(),
-                        nastaveniUctu.getZpusobPristupu(),
-                        pacientRequest.getHesla().getHeslo1()));
+                        kontakt.getMobil()));
     }
 }

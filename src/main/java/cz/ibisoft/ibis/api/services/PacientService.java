@@ -25,4 +25,10 @@ public interface PacientService {
      * @return pacient
      */
     Optional<Pacient> load(String id);
+
+    /**
+     * Zmena pacienta
+     * @param pacient pacient
+     */
+    void save(Pacient pacient);
 }

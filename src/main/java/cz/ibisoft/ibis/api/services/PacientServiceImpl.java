@@ -6,8 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
 import java.util.Optional;
+
+import static java.util.Objects.*;
 
 /**
  * Implementace {@link PacientService}
@@ -28,7 +29,7 @@ public class PacientServiceImpl implements PacientService {
     @Override
     @Transactional
     public void create(Pacient pacient) {
-        Objects.requireNonNull(pacient, "pacient cannot be null");
+        requireNonNull(pacient, "pacient cannot be null");
         pacientRepository.save(pacient);
     }
 
@@ -40,6 +41,15 @@ public class PacientServiceImpl implements PacientService {
      */
     @Override
     public Optional<Pacient> load(String id) {
-        return pacientRepository.findOnById(id);
+        return pacientRepository.findById(id);
     }
+
+    @Override
+    @Transactional
+    public void save(Pacient pacient) {
+        requireNonNull(pacient, "pacient cannot be null");
+        pacientRepository.save(pacient);
+    }
+
+
 }

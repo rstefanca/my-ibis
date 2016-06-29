@@ -4,11 +4,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * @author Richard Stefanca
@@ -27,6 +25,8 @@ public class BaseEntity {
 
     @LastModifiedDate
     private Date lastModified;
+    @Id
+    private String id = UUID.randomUUID().toString();
 
     public Long getVersion() {
         return version;
@@ -38,5 +38,13 @@ public class BaseEntity {
 
     public Date getLastModified() {
         return lastModified;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    protected void setId(String id) {
+        this.id = id;
     }
 }

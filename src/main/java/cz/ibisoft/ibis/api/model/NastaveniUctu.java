@@ -1,14 +1,20 @@
 package cz.ibisoft.ibis.api.model;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 
 /**
  * @author Richard Stefanca
  */
 
-@Embeddable
-public class NastaveniUctu {
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+public class NastaveniUctu extends BaseEntity {
+
+    public static NastaveniUctu DEFAULT = new NastaveniUctu("SMS", 1, "TEST", "MOBIL");
 
     @Column(name = "PreferovanaKomunikace")
     private String preferovanaKomunikace;
@@ -33,12 +39,11 @@ public class NastaveniUctu {
         //pro Hibernate
     }
 
-    public NastaveniUctu(String preferovanaKomunikace, Integer dobaUchovani, String pristupNaIdentifikatory, String zpusobPristupu, String heslo) {
+    public NastaveniUctu(String preferovanaKomunikace, Integer dobaUchovani, String pristupNaIdentifikatory, String zpusobPristupu) {
         this.preferovanaKomunikace = preferovanaKomunikace;
         this.dobaUchovani = dobaUchovani;
         this.pristupNaIdentifikatory = pristupNaIdentifikatory;
         this.zpusobPristupu = zpusobPristupu;
-        this.heslo = heslo;
     }
 
     public String getPreferovanaKomunikace() {

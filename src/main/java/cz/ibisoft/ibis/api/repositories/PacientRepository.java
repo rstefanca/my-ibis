@@ -12,5 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface PacientRepository extends CrudRepository<Pacient, String> {
-    Optional<Pacient> findOnById(String id);
+    Optional<Pacient> findById(String id);
+
+    Optional<Pacient> findByIdAndVersion(String guid, String version);
 }
