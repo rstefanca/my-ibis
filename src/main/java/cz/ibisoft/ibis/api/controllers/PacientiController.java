@@ -27,18 +27,24 @@ public class PacientiController {
     private PacientService pacientService;
 
     @RequestMapping(path = "/pacienti/{guid}")
-    public HttpEntity<Object> nacti(@PathVariable String guid,  @RequestHeader(name = "If-None-Match")Optional<String> version) {
-        System.out.println(version);
+    public HttpEntity<Object> nacti(@PathVariable String guid, @RequestHeader(name = "If-None-Match") Optional<String> noneMatchHeader) {
         Optional<Pacient> maybePacient = pacientService.load(guid);
+
         return maybePacient
-                .map(PacientiController::okWithBody)
+                .map(pacient -> bodyOrNoContent(pacient, noneMatchHeader))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    private static ResponseEntity<Object> bodyOrNoContent(Pacient pacient, Optional<String> noneMatchHeader) {
+        return noneMatchHeader
+                .map(Long::parseLong)
+                .map(version -> pacient.getVersion().equals(version) ? new ResponseEntity<>(HttpStatus.NOT_MODIFIED) : okWithBody(pacient))
+                .orElseGet(() -> okWithBody(pacient));
     }
 
     private static ResponseEntity<Object> okWithBody(Pacient pacient) {
         return ResponseEntity
                 .ok()
-                .cacheControl(CacheControl.noCache())
                 //.lastModified(pacient.getLastModified().getTime())
                 .eTag(String.valueOf(pacient.getVersion()))
                 .header("X-Version", pacient.getVersion().toString())
