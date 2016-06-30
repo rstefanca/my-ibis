@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Richard Stefanca
@@ -26,8 +27,8 @@ public class PacientiController {
     private PacientService pacientService;
 
     @RequestMapping(path = "/pacienti/{guid}")
-    public HttpEntity<Object> nacti(@PathVariable String guid) {
-        System.out.println(guid);
+    public HttpEntity<Object> nacti(@PathVariable String guid,  @RequestHeader(name = "If-None-Match")Optional<String> version) {
+        System.out.println(version);
         Optional<Pacient> maybePacient = pacientService.load(guid);
         return maybePacient
                 .map(PacientiController::okWithBody)
@@ -38,15 +39,17 @@ public class PacientiController {
         return ResponseEntity
                 .ok()
                 .cacheControl(CacheControl.noCache())
-                .lastModified(pacient.getLastModified().getTime())
-                .eTag(pacient.getVersion().toString())
+                //.lastModified(pacient.getLastModified().getTime())
+                .eTag(String.valueOf(pacient.getVersion()))
                 .header("X-Version", pacient.getVersion().toString())
-                .body((Object)createPacientResponse(pacient));
+                .body((Object) createPacientResponse(pacient));
     }
 
     @RequestMapping(path = "/pacienti", method = RequestMethod.POST)
     public HttpEntity<PacientResponse> zalozit(@RequestBody SimplePacientRequest simplePacientRequest) throws Exception {
-        Pacient pacient = mapToPacient(simplePacientRequest);
+        String guid = UUID.randomUUID().toString();
+        System.out.println(guid);
+        Pacient pacient = mapToPacient(guid, simplePacientRequest);
         pacientService.create(pacient);
 
         return ResponseEntity
@@ -57,18 +60,9 @@ public class PacientiController {
 
     @RequestMapping(path = "/pacienti/{guid}", method = RequestMethod.PUT)
     public HttpEntity<Object> upravit(@PathVariable String guid, @RequestHeader(name = "If-Match", required = true) String versionHeader, @RequestBody SimplePacientRequest simplePacientRequest) {
-        Long version = Long.parseLong(versionHeader);
-        Optional<Pacient> maybePacient = pacientService.load(guid);
-        if (!maybePacient.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        Pacient pacient = maybePacient.get();
-        if (!pacient.getVersion().equals(version)) {
-            ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(new Status("Entita byla zmenena"));
-        }
-        pacientService.save(pacient);
-        return okWithBody(pacient);
+        long version = Long.parseLong(versionHeader);
+        Optional<Pacient> savedPacient = pacientService.save(guid, version, simplePacientRequest);
+        return savedPacient.map(PacientiController::okWithBody).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @RequestMapping(path = "/pacienti/{guid}", method = RequestMethod.DELETE)
@@ -99,9 +93,10 @@ public class PacientiController {
                 .build();
     }
 
-    private static Pacient mapToPacient(@RequestBody SimplePacientRequest simplePacientRequest) {
+    private static Pacient mapToPacient(String id, SimplePacientRequest simplePacientRequest) {
         cz.ibisoft.ibis.api.json.Kontakt kontakt = simplePacientRequest.getKontakt();
         return new Pacient(
+                id,
                 simplePacientRequest.getCp(),
                 simplePacientRequest.getJmena(),
                 simplePacientRequest.getPrijmeni(),

@@ -35,7 +35,8 @@ public class Pacient extends BaseEntity {
 
     }
 
-    public Pacient(String cp, String jmena, String prijmeni, Kontakt kontakt) {
+    public Pacient(String id, String cp, String jmena, String prijmeni, Kontakt kontakt) {
+        this.id = id;
         this.cp = requireNonNull(cp, "cp cannot be null");
         this.jmena = requireNonNull(jmena, "jmena cannot be null");
         this.prijmeni = requireNonNull(prijmeni, "jmena cannot be null");

@@ -1,5 +1,6 @@
 package cz.ibisoft.ibis.api.services;
 
+import cz.ibisoft.ibis.api.json.SimplePacientRequest;
 import cz.ibisoft.ibis.api.model.Pacient;
 
 import java.util.Optional;
@@ -31,4 +32,6 @@ public interface PacientService {
      * @param pacient pacient
      */
     void save(Pacient pacient);
+
+    Optional<Pacient> save(String id, long version, SimplePacientRequest pacientRequest);
 }
