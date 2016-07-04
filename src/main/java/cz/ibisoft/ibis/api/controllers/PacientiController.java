@@ -1,17 +1,20 @@
 package cz.ibisoft.ibis.api.controllers;
 
-import cz.ibisoft.ibis.api.json.*;
+import cz.ibisoft.ibis.api.json.NastaveniUctuBuilder;
+import cz.ibisoft.ibis.api.json.PacientResponse;
+import cz.ibisoft.ibis.api.json.PacientResponseBuilder;
+import cz.ibisoft.ibis.api.json.SimplePacientRequest;
 import cz.ibisoft.ibis.api.model.Kontakt;
 import cz.ibisoft.ibis.api.model.NastaveniUctu;
 import cz.ibisoft.ibis.api.model.Pacient;
 import cz.ibisoft.ibis.api.services.PacientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.CacheControl;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,6 +38,12 @@ public class PacientiController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    /** Pokud je k dispozici header If-None-Match a zaznam nebyl zmenen vraci http kod 304
+     *
+     * @param pacient nacteny pacient
+     * @param noneMatchHeader If-None-Match obsahujici verzi zaznamu
+     * @return response
+     */
     private static ResponseEntity<Object> bodyOrNoContent(Pacient pacient, Optional<String> noneMatchHeader) {
         return noneMatchHeader
                 .map(Long::parseLong)
@@ -42,17 +51,8 @@ public class PacientiController {
                 .orElseGet(() -> okWithBody(pacient));
     }
 
-    private static ResponseEntity<Object> okWithBody(Pacient pacient) {
-        return ResponseEntity
-                .ok()
-                //.lastModified(pacient.getLastModified().getTime())
-                .eTag(String.valueOf(pacient.getVersion()))
-                .header("X-Version", pacient.getVersion().toString())
-                .body((Object) createPacientResponse(pacient));
-    }
-
     @RequestMapping(path = "/pacienti", method = RequestMethod.POST)
-    public HttpEntity<PacientResponse> zalozit(@RequestBody SimplePacientRequest simplePacientRequest) throws Exception {
+    public HttpEntity<PacientResponse> zalozit(@Valid @RequestBody SimplePacientRequest simplePacientRequest) throws Exception {
         String guid = UUID.randomUUID().toString();
         System.out.println(guid);
         Pacient pacient = mapToPacient(guid, simplePacientRequest);
@@ -60,6 +60,7 @@ public class PacientiController {
 
         return ResponseEntity
                 .created(new URI("/pacienti/" + pacient.getId()))
+                .eTag("0")
                 //.lastModified(pacient.getCreatedDate().getTime())
                 .body(createPacientResponse(pacient));
     }
@@ -75,6 +76,15 @@ public class PacientiController {
     public HttpEntity<Void> smazat(@PathVariable String guid) {
         return ResponseEntity.noContent().build();
     }
+
+    private static ResponseEntity<Object> okWithBody(Pacient pacient) {
+        return ResponseEntity
+                .ok()
+                //.lastModified(pacient.getLastModified().getTime())
+                .eTag(String.valueOf(pacient.getVersion()))
+                .body((Object) createPacientResponse(pacient));
+    }
+
 
     private static PacientResponse createPacientResponse(@RequestBody Pacient pacient) {
         cz.ibisoft.ibis.api.json.NastaveniUctu nastaveniUctu = createNastaveniUctuResponse(NastaveniUctu.DEFAULT);

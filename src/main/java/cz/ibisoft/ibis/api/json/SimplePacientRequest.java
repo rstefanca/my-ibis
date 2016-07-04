@@ -1,13 +1,24 @@
 package cz.ibisoft.ibis.api.json;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 /**
  * @author Richard Stefanca
  */
 public class SimplePacientRequest {
 
+    @Min(9)
+    @Max(10)
     private String cp;
+
+    @NotNull
     private String jmena;
+
+    @NotNull
     private String prijmeni;
+
     private Kontakt kontakt;
 
     public String getCp() {

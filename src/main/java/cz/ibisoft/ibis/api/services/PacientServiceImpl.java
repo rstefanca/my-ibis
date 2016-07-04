@@ -48,7 +48,7 @@ public class PacientServiceImpl implements PacientService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional
     public void save(Pacient pacient) {
         requireNonNull(pacient, "pacient cannot be null");
         pacientRepository.save(pacient);
@@ -58,14 +58,11 @@ public class PacientServiceImpl implements PacientService {
     @Transactional
     public Optional<Pacient> save(String id, long version, SimplePacientRequest pacientRequest) {
         if (!pacientRepository.exists(id)) {
-            throw new RuntimeException("Row doesn exists");
+            throw new RuntimeException("Row doesnt exists");
         }
         Pacient pacient = new Pacient(id, pacientRequest.getCp(), pacientRequest.getJmena(), pacientRequest.getPrijmeni(), new Kontakt("", ""));
         pacient.setVersion(version);
         Pacient saved = pacientRepository.save(pacient);
         return Optional.ofNullable(saved);
     }
-
-
-
 }
