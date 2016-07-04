@@ -1,7 +1,7 @@
 package cz.ibisoft.ibis.api.json;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import org.hibernate.validator.constraints.Length;
+
 import javax.validation.constraints.NotNull;
 
 /**
@@ -9,8 +9,7 @@ import javax.validation.constraints.NotNull;
  */
 public class SimplePacientRequest {
 
-    @Min(9)
-    @Max(10)
+    @Length(min = 9, max = 10)
     private String cp;
 
     @NotNull
