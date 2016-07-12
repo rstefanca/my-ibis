@@ -1,9 +1,8 @@
-package cz.ibisoft.ibis.api.model;
+package cz.ibisoft.ibis.api.domain;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 
@@ -27,21 +26,18 @@ public class Pacient extends BaseEntity {
     @Embedded
     private Kontakt kontakt;
 
-
-   /* //todo 1:1
-    private NastaveniUctu nastaveniUctu;*/
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "pacient", cascade = CascadeType.ALL)
+    private NastaveniUctu nastaveniUctu;
 
     public Pacient() {
 
     }
 
-    public Pacient(String id, String cp, String jmena, String prijmeni, Kontakt kontakt) {
-        this.id = id;
+    public Pacient(String cp, String jmena, String prijmeni, Kontakt kontakt) {
         this.cp = requireNonNull(cp, "cp cannot be null");
         this.jmena = requireNonNull(jmena, "jmena cannot be null");
         this.prijmeni = requireNonNull(prijmeni, "jmena cannot be null");
         this.kontakt = requireNonNull(kontakt, "kontakt cannot be null");
-
     }
 
 
@@ -75,5 +71,13 @@ public class Pacient extends BaseEntity {
 
     public void setKontakt(Kontakt kontakt) {
         this.kontakt = kontakt;
+    }
+
+    public NastaveniUctu getNastaveniUctu() {
+        return nastaveniUctu;
+    }
+
+    public void setNastaveniUctu(NastaveniUctu nastaveniUctu) {
+        this.nastaveniUctu = nastaveniUctu;
     }
 }

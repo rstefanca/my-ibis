@@ -1,41 +1,39 @@
 package cz.ibisoft.ibis.api.controllers;
 
+import cz.ibisoft.ibis.api.domain.Kontakt;
+import cz.ibisoft.ibis.api.domain.NastaveniUctu;
+import cz.ibisoft.ibis.api.domain.Pacient;
 import cz.ibisoft.ibis.api.json.NastaveniUctuBuilder;
 import cz.ibisoft.ibis.api.json.PacientResponse;
 import cz.ibisoft.ibis.api.json.PacientResponseBuilder;
 import cz.ibisoft.ibis.api.json.SimplePacientRequest;
-import cz.ibisoft.ibis.api.model.Kontakt;
-import cz.ibisoft.ibis.api.model.NastaveniUctu;
-import cz.ibisoft.ibis.api.model.Pacient;
 import cz.ibisoft.ibis.api.services.PacientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * @author Richard Stefanca
  */
 
 @RestController
+@RequestMapping("/pacienti")
 public class PacientiController {
 
     @Autowired
     private PacientService pacientService;
 
-    @RequestMapping(path = "/pacienti/{guid}")
-    public HttpEntity<Object> nacti(@PathVariable String guid, @RequestHeader(name = "If-None-Match") Optional<String> noneMatchHeader) {
-        Optional<Pacient> maybePacient = pacientService.load(guid);
-
-        return maybePacient
-                .map(pacient -> bodyOrNoContent(pacient, noneMatchHeader))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    @RequestMapping(path = "/{guid}")
+    public HttpEntity<Object> loadPacient(@PathVariable String guid, @RequestHeader(name = "If-None-Match") Optional<String> noneMatchHeader) {
+        Pacient pacient = pacientService.findById(guid);
+        return bodyOrNoContent(pacient, noneMatchHeader);
     }
 
     /** Pokud je k dispozici header If-None-Match a zaznam nebyl zmenen vraci http kod 304
@@ -51,29 +49,43 @@ public class PacientiController {
                 .orElseGet(() -> okWithBody(pacient));
     }
 
-    @RequestMapping(path = "/pacienti", method = RequestMethod.POST)
-    public HttpEntity<PacientResponse> zalozit(@Valid @RequestBody SimplePacientRequest simplePacientRequest) throws Exception {
-        String guid = UUID.randomUUID().toString();
-        System.out.println(guid);
-        Pacient pacient = mapToPacient(guid, simplePacientRequest);
-        pacientService.create(pacient);
+    @RequestMapping(method = RequestMethod.POST)
+    public HttpEntity<PacientResponse> createPacient(@Valid @RequestBody SimplePacientRequest simplePacientRequest) throws Exception {
+        Pacient pacient = pacientService.create(
+                simplePacientRequest.getCp(),
+                simplePacientRequest.getJmena(),
+                simplePacientRequest.getPrijmeni(),
+                simplePacientRequest.getKontakt().getEmail(),
+                simplePacientRequest.getKontakt().getMobil()
+        );
+
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/pacienti/{guid}")
+                .buildAndExpand(pacient.getId())
+                .toUri();
 
         return ResponseEntity
-                .created(new URI("/pacienti/" + pacient.getId()))
+                .created(uriOfNewResource)
                 .eTag("0")
-                //.lastModified(pacient.getCreatedDate().getTime())
                 .body(createPacientResponse(pacient));
     }
 
-    @RequestMapping(path = "/pacienti/{guid}", method = RequestMethod.PUT)
-    public HttpEntity<Object> upravit(@PathVariable String guid, @RequestHeader(name = "If-Match", required = true) String versionHeader, @RequestBody SimplePacientRequest simplePacientRequest) {
+    @RequestMapping(path = "/{guid}", method = RequestMethod.PUT)
+    public HttpEntity<Object> updatePacient(@PathVariable String guid, @RequestHeader(name = "If-Match", required = true) String versionHeader, @RequestBody SimplePacientRequest simplePacientRequest) {
         long version = Long.parseLong(versionHeader);
-        Optional<Pacient> savedPacient = pacientService.save(guid, version, simplePacientRequest);
-        return savedPacient.map(PacientiController::okWithBody).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        Pacient pacient = pacientService.update(
+                guid,
+                version,
+                simplePacientRequest.getCp(),
+                simplePacientRequest.getJmena(),
+                simplePacientRequest.getPrijmeni(),
+                simplePacientRequest.getKontakt().getEmail(),
+                simplePacientRequest.getKontakt().getMobil());
+        return okWithBody(pacient);
     }
 
-    @RequestMapping(path = "/pacienti/{guid}", method = RequestMethod.DELETE)
-    public HttpEntity<Void> smazat(@PathVariable String guid) {
+    @RequestMapping(path = "/{guid}", method = RequestMethod.DELETE)
+    public HttpEntity<Void> deletePacient(@PathVariable String guid) {
         return ResponseEntity.noContent().build();
     }
 
@@ -82,12 +94,12 @@ public class PacientiController {
                 .ok()
                 //.lastModified(pacient.getLastModified().getTime())
                 .eTag(String.valueOf(pacient.getVersion()))
-                .body((Object) createPacientResponse(pacient));
+                .body(createPacientResponse(pacient));
     }
 
 
     private static PacientResponse createPacientResponse(@RequestBody Pacient pacient) {
-        cz.ibisoft.ibis.api.json.NastaveniUctu nastaveniUctu = createNastaveniUctuResponse(NastaveniUctu.DEFAULT);
+        cz.ibisoft.ibis.api.json.NastaveniUctu nastaveniUctu = createNastaveniUctuResponse(pacient.getNastaveniUctu());
         Kontakt kontakt = pacient.getKontakt();
         return PacientResponseBuilder.aPacientResponse()
                 .withCp(pacient.getCp())
@@ -107,17 +119,5 @@ public class PacientiController {
                 .withPristupNaIdentifikatory(nastaveniUctu.getPristupNaIdentifikatory())
                 .withZpusobPristupu(nastaveniUctu.getZpusobPristupu())
                 .build();
-    }
-
-    private static Pacient mapToPacient(String id, SimplePacientRequest simplePacientRequest) {
-        cz.ibisoft.ibis.api.json.Kontakt kontakt = simplePacientRequest.getKontakt();
-        return new Pacient(
-                id,
-                simplePacientRequest.getCp(),
-                simplePacientRequest.getJmena(),
-                simplePacientRequest.getPrijmeni(),
-                new Kontakt(
-                        kontakt.getEmail(),
-                        kontakt.getMobil()));
     }
 }

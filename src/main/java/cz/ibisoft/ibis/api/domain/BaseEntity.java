@@ -1,4 +1,4 @@
-package cz.ibisoft.ibis.api.model;
+package cz.ibisoft.ibis.api.domain;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -8,13 +8,13 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * @author Richard Stefanca
  */
 
 @MappedSuperclass
-
 public class BaseEntity {
 
     @Version
@@ -28,7 +28,7 @@ public class BaseEntity {
     private Date lastModified;
 
     @Id
-    protected String id;
+    protected String id = UUID.randomUUID().toString();
 
     public Long getVersion() {
         return version;
@@ -50,7 +50,7 @@ public class BaseEntity {
         return id;
     }
 
-    protected void setId(String id) {
+    public void setId(String id) {
         this.id = id;
     }
 }

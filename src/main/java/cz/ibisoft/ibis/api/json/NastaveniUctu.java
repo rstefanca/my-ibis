@@ -1,13 +1,22 @@
 package cz.ibisoft.ibis.api.json;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author Richard Stefanca
  */
 public class NastaveniUctu {
 
+    @NotNull
     private String preferovanaKomunikace;
+
+    @NotNull
     private Integer dobaUchovani;
+
+    @NotNull
     private String pristupNaIdentifikatory;
+
+    @NotNull
     private String zpusobPristupu;
 
     public String getPreferovanaKomunikace() {

@@ -1,4 +1,4 @@
-package cz.ibisoft.ibis.api.model;
+package cz.ibisoft.ibis.api.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

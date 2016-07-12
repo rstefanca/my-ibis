@@ -1,10 +1,8 @@
-package cz.ibisoft.ibis.api.model;
+package cz.ibisoft.ibis.api.domain;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
+import javax.persistence.*;
 
 /**
  * @author Richard Stefanca
@@ -14,7 +12,7 @@ import javax.persistence.EntityListeners;
 @EntityListeners(AuditingEntityListener.class)
 public class NastaveniUctu extends BaseEntity {
 
-    public static NastaveniUctu DEFAULT = new NastaveniUctu("SMS", 1, "TEST", "MOBIL");
+
 
     @Column(name = "PreferovanaKomunikace")
     private String preferovanaKomunikace;
@@ -33,6 +31,10 @@ public class NastaveniUctu extends BaseEntity {
 
     @Column(name = "Zablokovany")
     private boolean zablokovany;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pacient_id", referencedColumnName = "id", nullable = false)
+    private Pacient pacient;
 
 
     protected NastaveniUctu() {
@@ -92,5 +94,13 @@ public class NastaveniUctu extends BaseEntity {
 
     public void setHeslo(String heslo) {
         this.heslo = heslo;
+    }
+
+    public Pacient getPacient() {
+        return pacient;
+    }
+
+    public void setPacient(Pacient pacient) {
+        this.pacient = pacient;
     }
 }
