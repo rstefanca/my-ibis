@@ -3,6 +3,7 @@ package cz.ibisoft.ibis.api.services;
 import cz.ibisoft.ibis.api.domain.NastaveniUctu;
 import cz.ibisoft.ibis.api.domain.Pacient;
 import cz.ibisoft.ibis.api.domain.PacientFactory;
+import cz.ibisoft.ibis.api.repositories.NastaveniUctuRepository;
 import cz.ibisoft.ibis.api.repositories.PacientRepository;
 import cz.ibisoft.ibis.api.services.exceptions.PacientNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class JpaPacientService implements PacientService {
     @Autowired
     private PacientRepository pacientRepository;
 
+    @Autowired
+    private NastaveniUctuRepository nastaveniUctuRepository;
+
     /**
      * Zalozeni pacienta
      *
@@ -35,7 +39,7 @@ public class JpaPacientService implements PacientService {
     @Transactional
     public Pacient create(String cp, String jmena, String prijmeni, String email, String mobile) {
         Pacient pacient = PacientFactory.createNewPacient(cp, jmena, prijmeni, email, mobile);
-        pacientRepository.update(pacient);
+        pacientRepository.save(pacient);
         return pacient;
     }
 
@@ -73,11 +77,23 @@ public class JpaPacientService implements PacientService {
     @Override
     @Transactional
     public NastaveniUctu updateNastaveniUctu(String guid, String preferovanaKomunikace, Integer dobaUchovani, String pristupNaIdentifikatory, String zpusobPristupu) {
-        return null;
+        NastaveniUctu nastaveniUctu = loadPacientNastaveniUctu(guid);
+        nastaveniUctu.setPreferovanaKomunikace(preferovanaKomunikace);
+        nastaveniUctu.setDobaUchovani(dobaUchovani);
+        nastaveniUctu.setPristupNaIdentifikatory(pristupNaIdentifikatory);
+        nastaveniUctu.setZpusobPristupu(zpusobPristupu);
+        nastaveniUctuRepository.save(nastaveniUctu); //asi update jako pacient, kvuli version
+
+        return nastaveniUctu;
     }
 
     @Override
     public NastaveniUctu loadPacientNastaveniUctu(String guid) {
-        throw new UnsupportedOperationException("Neumime");
+        NastaveniUctu nastaveniUctu =  nastaveniUctuRepository.findByPacientId(guid);
+        if (nastaveniUctu == null) {
+            throw new PacientNotFoundException(guid);
+        }
+
+        return nastaveniUctu;
     }
 }

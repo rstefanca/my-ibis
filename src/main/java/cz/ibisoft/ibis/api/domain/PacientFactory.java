@@ -24,6 +24,7 @@ public class PacientFactory {
         NastaveniUctu defaultNastaveniUctu = new NastaveniUctu("SMS", 1, "TEST", "MOBIL");
         defaultNastaveniUctu.setPacient(pacient);
         pacient.setNastaveniUctu(defaultNastaveniUctu);
+        pacient.getNastaveniUctu().setHeslo("heslo");
         return pacient;
     }
 }

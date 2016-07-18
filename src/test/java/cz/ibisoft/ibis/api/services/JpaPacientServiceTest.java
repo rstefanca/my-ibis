@@ -1,7 +1,9 @@
 package cz.ibisoft.ibis.api.services;
 
 import cz.ibisoft.ibis.api.domain.Kontakt;
+import cz.ibisoft.ibis.api.domain.NastaveniUctu;
 import cz.ibisoft.ibis.api.domain.Pacient;
+import cz.ibisoft.ibis.api.repositories.NastaveniUctuRepository;
 import cz.ibisoft.ibis.api.repositories.PacientRepository;
 import cz.ibisoft.ibis.api.services.exceptions.PacientNotFoundException;
 import org.junit.Test;
@@ -9,6 +11,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -25,6 +29,9 @@ public class JpaPacientServiceTest {
 
     @Mock
     private PacientRepository pacientRepository;
+
+    @Mock
+    private NastaveniUctuRepository nastaveniUctuRepository;
 
     @InjectMocks
     private PacientService pacientService = new JpaPacientService();
@@ -96,13 +103,47 @@ public class JpaPacientServiceTest {
     }
 
     @Test(expected = PacientNotFoundException.class)
-    public void update_throws_exception_when_id_not_found() {
+    public void update_throws_pacient_not_found_exception_when_id_not_found() {
         when(pacientRepository.findOne(eq("1"))).thenReturn(null);
         try {
             pacientService.update("1", 0, "cp", "jmena", "prijmeni", "email", "mobil");
         } finally {
             verify(pacientRepository).findOne(eq("1"));
         }
+    }
+
+    @Test
+    public void update_nastaveni_uctu_ok() {
+        NastaveniUctu mockNastaveni = mockNastaveniUctu();
+        String pacientId = UUID.randomUUID().toString();
+
+        when(nastaveniUctuRepository.findByPacientId(eq(pacientId))).thenReturn(mockNastaveni);
+
+        NastaveniUctu nastaveniUctu = pacientService.updateNastaveniUctu(pacientId, "MOBILNI_APLIKACE", 2, "PREDEPSANE_VYDANE", "KARTA_PACIENTA");
+
+        assertEquals("MOBILNI_APLIKACE", nastaveniUctu.getPreferovanaKomunikace());
+        assertEquals((Integer)2, nastaveniUctu.getDobaUchovani());
+        assertEquals("PREDEPSANE_VYDANE", nastaveniUctu.getPristupNaIdentifikatory());
+        assertEquals("KARTA_PACIENTA", nastaveniUctu.getZpusobPristupu());
+
+        verify(nastaveniUctuRepository).findByPacientId(eq(pacientId));
+    }
+
+    @Test(expected = PacientNotFoundException.class)
+    public void update_nastaveni_uctu_throws_pacient_not_found_exception_when_given_user_not_found() {
+        String pacientId = UUID.randomUUID().toString();
+        when(nastaveniUctuRepository.findByPacientId(eq(pacientId))).thenReturn(null);
+
+        try {
+            pacientService.updateNastaveniUctu(pacientId, "MOBILNI_APLIKACE", 2, "PREDEPSANE_VYDANE", "KARTA_PACIENTA");
+        } finally {
+            verify(nastaveniUctuRepository).findByPacientId(eq(pacientId));
+        }
+
+    }
+
+    private NastaveniUctu mockNastaveniUctu() {
+        return new NastaveniUctu("SMS", 1, "PREDEPSANE", "OTP_KOD");
     }
 
     private static Pacient mockPacient(String prefix) {

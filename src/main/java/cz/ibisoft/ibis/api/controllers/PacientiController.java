@@ -8,6 +8,8 @@ import cz.ibisoft.ibis.api.json.NastaveniUctuResponse;
 import cz.ibisoft.ibis.api.json.PacientResponse;
 import cz.ibisoft.ibis.api.json.SimplePacientRequest;
 import cz.ibisoft.ibis.api.services.PacientService;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.security.Principal;
 import java.util.Optional;
 
 import static cz.ibisoft.ibis.api.json.PacientResponse.PacientResponseBuilder.aPacientResponse;
@@ -33,7 +36,8 @@ public class PacientiController {
     private PacientService pacientService;
 
     @RequestMapping(path = "/{guid}")
-    public HttpEntity<Object> loadPacient(@PathVariable String guid, @RequestHeader(name = "If-None-Match") Optional<String> noneMatchHeader) {
+    public HttpEntity<Object> loadPacient(Principal principal, @PathVariable String guid, @Nullable @RequestHeader(name = "If-None-Match", required = false) String noneMatchHeader) {
+        System.out.println(principal.getName());
         Pacient pacient = pacientService.findById(guid);
         return bodyOrNoContent(pacient, noneMatchHeader);
     }
@@ -44,11 +48,14 @@ public class PacientiController {
      * @param noneMatchHeader If-None-Match obsahujici verzi zaznamu
      * @return response
      */
-    private static ResponseEntity<Object> bodyOrNoContent(Pacient pacient, Optional<String> noneMatchHeader) {
-        return noneMatchHeader
-                .map(Long::parseLong)
-                .map(version -> pacient.getVersion().equals(version) ? new ResponseEntity<>(HttpStatus.NOT_MODIFIED) : okWithBody(pacient))
-                .orElseGet(() -> okWithBody(pacient));
+    private static ResponseEntity<Object> bodyOrNoContent(Pacient pacient, String noneMatchHeader) {
+        if (noneMatchHeader != null) {
+            Long version = Long.parseLong(noneMatchHeader);
+            return pacient.getVersion().equals(version) ?
+                    new ResponseEntity<>(HttpStatus.NOT_MODIFIED) : okWithBody(pacient);
+        }
+
+        return okWithBody(pacient);
     }
 
     @RequestMapping(method = RequestMethod.POST)
