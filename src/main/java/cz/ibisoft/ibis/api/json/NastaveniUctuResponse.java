@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 /**
  * @author Richard Stefanca
  */
-public class NastaveniUctu {
+public class NastaveniUctuResponse {
 
     @NotNull
     private String preferovanaKomunikace;

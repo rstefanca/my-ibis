@@ -4,8 +4,8 @@ import cz.ibisoft.ibis.api.domain.Kontakt;
 import cz.ibisoft.ibis.api.domain.NastaveniUctu;
 import cz.ibisoft.ibis.api.domain.Pacient;
 import cz.ibisoft.ibis.api.json.NastaveniUctuBuilder;
+import cz.ibisoft.ibis.api.json.NastaveniUctuResponse;
 import cz.ibisoft.ibis.api.json.PacientResponse;
-import cz.ibisoft.ibis.api.json.PacientResponseBuilder;
 import cz.ibisoft.ibis.api.json.SimplePacientRequest;
 import cz.ibisoft.ibis.api.services.PacientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
+
+import static cz.ibisoft.ibis.api.json.PacientResponse.PacientResponseBuilder.aPacientResponse;
 
 /**
  * @author Richard Stefanca
@@ -99,20 +101,21 @@ public class PacientiController {
 
 
     private static PacientResponse createPacientResponse(@RequestBody Pacient pacient) {
-        cz.ibisoft.ibis.api.json.NastaveniUctu nastaveniUctu = createNastaveniUctuResponse(pacient.getNastaveniUctu());
+        NastaveniUctuResponse nastaveniUctuResponse = createNastaveniUctuResponse(pacient.getNastaveniUctu());
         Kontakt kontakt = pacient.getKontakt();
-        return PacientResponseBuilder.aPacientResponse()
+        return aPacientResponse()
+                .withId(pacient.getId())
                 .withCp(pacient.getCp())
                 .withJmena(pacient.getJmena())
                 .withPrijmeni(pacient.getPrijmeni())
                 .withKontakt(new cz.ibisoft.ibis.api.json.Kontakt(kontakt.getEmail(), kontakt.getEmail()))
-                .withNastaveniUctu(nastaveniUctu)
+                .withNastaveniUctu(nastaveniUctuResponse)
                 .withOtpKodProZalozeni("otpKod")
                 .withStavUctu("aktivni")
                 .build();
     }
 
-    private static cz.ibisoft.ibis.api.json.NastaveniUctu createNastaveniUctuResponse(NastaveniUctu nastaveniUctu) {
+    private static NastaveniUctuResponse createNastaveniUctuResponse(NastaveniUctu nastaveniUctu) {
         return NastaveniUctuBuilder.aNastaveniUctu()
                 .withDobaUchovani(nastaveniUctu.getDobaUchovani())
                 .withPreferovanaKomunikace(nastaveniUctu.getPreferovanaKomunikace())

@@ -36,12 +36,12 @@ public final class NastaveniUctuBuilder {
         return this;
     }
 
-    public NastaveniUctu build() {
-        NastaveniUctu nastaveniUctu = new NastaveniUctu();
-        nastaveniUctu.setPreferovanaKomunikace(preferovanaKomunikace);
-        nastaveniUctu.setDobaUchovani(dobaUchovani);
-        nastaveniUctu.setPristupNaIdentifikatory(pristupNaIdentifikatory);
-        nastaveniUctu.setZpusobPristupu(zpusobPristupu);
-        return nastaveniUctu;
+    public NastaveniUctuResponse build() {
+        NastaveniUctuResponse nastaveniUctuResponse = new NastaveniUctuResponse();
+        nastaveniUctuResponse.setPreferovanaKomunikace(preferovanaKomunikace);
+        nastaveniUctuResponse.setDobaUchovani(dobaUchovani);
+        nastaveniUctuResponse.setPristupNaIdentifikatory(pristupNaIdentifikatory);
+        nastaveniUctuResponse.setZpusobPristupu(zpusobPristupu);
+        return nastaveniUctuResponse;
     }
 }
