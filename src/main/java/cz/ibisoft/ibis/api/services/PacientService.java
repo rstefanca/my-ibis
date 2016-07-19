@@ -1,8 +1,7 @@
 package cz.ibisoft.ibis.api.services;
 
-import cz.ibisoft.ibis.api.domain.NastaveniUctu;
+import cz.ibisoft.ibis.api.domain.*;
 import cz.ibisoft.ibis.api.json.SimplePacientRequest;
-import cz.ibisoft.ibis.api.domain.Pacient;
 
 import java.util.Optional;
 
@@ -20,8 +19,9 @@ public interface PacientService {
      * @param prijmeni
      * @param email
      * @param mobile
+     * @param heslo
      */
-    Pacient create(String cp, String jmena, String prijmeni, String email, String mobile);
+    Pacient create(String cp, String jmena, String prijmeni, String email, String mobile, String heslo);
 
     /**
      * Nacteni daneho pacienta
@@ -33,7 +33,7 @@ public interface PacientService {
 
     Pacient update(String id, long version, String cp, String jmena, String prijmeni, String email, String mobile);
 
-    NastaveniUctu updateNastaveniUctu(String guid, String preferovanaKomunikace, Integer dobaUchovani, String pristupNaIdentifikatory, String zpusobPristupu);
+    NastaveniUctu updateNastaveniUctu(String guid, PreferovanaKomunikace preferovanaKomunikace, Integer dobaUchovani, PristupNaIdentifikatory pristupNaIdentifikatory, ZpusobPristupu zpusobPristupu);
 
     NastaveniUctu loadPacientNastaveniUctu(String guid);
 }

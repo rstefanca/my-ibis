@@ -1,8 +1,6 @@
 package cz.ibisoft.ibis.api.services;
 
-import cz.ibisoft.ibis.api.domain.NastaveniUctu;
-import cz.ibisoft.ibis.api.domain.Pacient;
-import cz.ibisoft.ibis.api.domain.PacientFactory;
+import cz.ibisoft.ibis.api.domain.*;
 import cz.ibisoft.ibis.api.repositories.NastaveniUctuRepository;
 import cz.ibisoft.ibis.api.repositories.PacientRepository;
 import cz.ibisoft.ibis.api.services.exceptions.PacientNotFoundException;
@@ -34,11 +32,12 @@ public class JpaPacientService implements PacientService {
      * @param prijmeni
      * @param email
      * @param mobile
+     * @param heslo
      */
     @Override
     @Transactional
-    public Pacient create(String cp, String jmena, String prijmeni, String email, String mobile) {
-        Pacient pacient = PacientFactory.createNewPacient(cp, jmena, prijmeni, email, mobile);
+    public Pacient create(String cp, String jmena, String prijmeni, String email, String mobile, String heslo) {
+        Pacient pacient = PacientFactory.createNewPacient(cp, jmena, prijmeni, email, mobile, heslo);
         pacientRepository.save(pacient);
         return pacient;
     }
@@ -76,7 +75,7 @@ public class JpaPacientService implements PacientService {
 
     @Override
     @Transactional
-    public NastaveniUctu updateNastaveniUctu(String guid, String preferovanaKomunikace, Integer dobaUchovani, String pristupNaIdentifikatory, String zpusobPristupu) {
+    public NastaveniUctu updateNastaveniUctu(String guid, PreferovanaKomunikace preferovanaKomunikace, Integer dobaUchovani, PristupNaIdentifikatory pristupNaIdentifikatory, ZpusobPristupu zpusobPristupu) {
         NastaveniUctu nastaveniUctu = loadPacientNastaveniUctu(guid);
         nastaveniUctu.setPreferovanaKomunikace(preferovanaKomunikace);
         nastaveniUctu.setDobaUchovani(dobaUchovani);

@@ -15,22 +15,19 @@ public class NastaveniUctu extends BaseEntity {
 
 
     @Column(name = "PreferovanaKomunikace")
-    private String preferovanaKomunikace;
+    @Enumerated(EnumType.STRING)
+    private PreferovanaKomunikace preferovanaKomunikace;
 
     @Column(name = "DobaUchovaniIdentifikatoru")
     private Integer dobaUchovani;
 
     @Column(name = "PristupNaIdentifikatory")
-    private String pristupNaIdentifikatory;
+    @Enumerated(EnumType.STRING)
+    private PristupNaIdentifikatory pristupNaIdentifikatory;
 
     @Column(name = "ZpusobPristupu")
-    private String zpusobPristupu;
-
-    @Column(name = "Heslo")
-    private String heslo;
-
-    @Column(name = "Zablokovany")
-    private boolean zablokovany;
+    @Enumerated(EnumType.STRING)
+    private ZpusobPristupu zpusobPristupu;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pacient_id", referencedColumnName = "id", nullable = false)
@@ -41,18 +38,18 @@ public class NastaveniUctu extends BaseEntity {
         //pro Hibernate
     }
 
-    public NastaveniUctu(String preferovanaKomunikace, Integer dobaUchovani, String pristupNaIdentifikatory, String zpusobPristupu) {
+    public NastaveniUctu(PreferovanaKomunikace preferovanaKomunikace, Integer dobaUchovani, PristupNaIdentifikatory pristupNaIdentifikatory, ZpusobPristupu zpusobPristupu) {
         this.preferovanaKomunikace = preferovanaKomunikace;
         this.dobaUchovani = dobaUchovani;
         this.pristupNaIdentifikatory = pristupNaIdentifikatory;
         this.zpusobPristupu = zpusobPristupu;
     }
 
-    public String getPreferovanaKomunikace() {
+    public PreferovanaKomunikace getPreferovanaKomunikace() {
         return preferovanaKomunikace;
     }
 
-    public void setPreferovanaKomunikace(String preferovanaKomunikace) {
+    public void setPreferovanaKomunikace(PreferovanaKomunikace preferovanaKomunikace) {
         this.preferovanaKomunikace = preferovanaKomunikace;
     }
 
@@ -64,36 +61,20 @@ public class NastaveniUctu extends BaseEntity {
         this.dobaUchovani = dobaUchovani;
     }
 
-    public String getPristupNaIdentifikatory() {
+    public PristupNaIdentifikatory getPristupNaIdentifikatory() {
         return pristupNaIdentifikatory;
     }
 
-    public void setPristupNaIdentifikatory(String pristupNaIdentifikatory) {
+    public void setPristupNaIdentifikatory(PristupNaIdentifikatory pristupNaIdentifikatory) {
         this.pristupNaIdentifikatory = pristupNaIdentifikatory;
     }
 
-    public String getZpusobPristupu() {
+    public ZpusobPristupu getZpusobPristupu() {
         return zpusobPristupu;
     }
 
-    public void setZpusobPristupu(String zpusobPristupu) {
+    public void setZpusobPristupu(ZpusobPristupu zpusobPristupu) {
         this.zpusobPristupu = zpusobPristupu;
-    }
-
-    public boolean isZablokovany() {
-        return zablokovany;
-    }
-
-    public void setZablokovany(boolean zablokovany) {
-        this.zablokovany = zablokovany;
-    }
-
-    public String getHeslo() {
-        return heslo;
-    }
-
-    public void setHeslo(String heslo) {
-        this.heslo = heslo;
     }
 
     public Pacient getPacient() {

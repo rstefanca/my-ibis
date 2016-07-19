@@ -8,7 +8,6 @@ import cz.ibisoft.ibis.api.json.NastaveniUctuResponse;
 import cz.ibisoft.ibis.api.json.PacientResponse;
 import cz.ibisoft.ibis.api.json.SimplePacientRequest;
 import cz.ibisoft.ibis.api.services.PacientService;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -20,7 +19,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
-import java.util.Optional;
 
 import static cz.ibisoft.ibis.api.json.PacientResponse.PacientResponseBuilder.aPacientResponse;
 
@@ -65,7 +63,8 @@ public class PacientiController {
                 simplePacientRequest.getJmena(),
                 simplePacientRequest.getPrijmeni(),
                 simplePacientRequest.getKontakt().getEmail(),
-                simplePacientRequest.getKontakt().getMobil()
+                simplePacientRequest.getKontakt().getMobil(),
+                simplePacientRequest.getHeslo()
         );
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -118,16 +117,16 @@ public class PacientiController {
                 .withKontakt(new cz.ibisoft.ibis.api.json.Kontakt(kontakt.getEmail(), kontakt.getEmail()))
                 .withNastaveniUctu(nastaveniUctuResponse)
                 .withOtpKodProZalozeni("otpKod")
-                .withStavUctu("aktivni")
+                .withStavUctu(pacient.isZablokovany() ? "zablokovany" : "aktivni")
                 .build();
     }
 
     private static NastaveniUctuResponse createNastaveniUctuResponse(NastaveniUctu nastaveniUctu) {
         return NastaveniUctuBuilder.aNastaveniUctu()
                 .withDobaUchovani(nastaveniUctu.getDobaUchovani())
-                .withPreferovanaKomunikace(nastaveniUctu.getPreferovanaKomunikace())
-                .withPristupNaIdentifikatory(nastaveniUctu.getPristupNaIdentifikatory())
-                .withZpusobPristupu(nastaveniUctu.getZpusobPristupu())
+                .withPreferovanaKomunikace(nastaveniUctu.getPreferovanaKomunikace().toString())
+                .withPristupNaIdentifikatory(nastaveniUctu.getPristupNaIdentifikatory().toString())
+                .withZpusobPristupu(nastaveniUctu.getZpusobPristupu().toString())
                 .build();
     }
 }

@@ -23,23 +23,28 @@ public class Pacient extends BaseEntity {
     @Column(name = "Prijmeni")
     private String prijmeni;
 
+    @Column(name = "Heslo")
+    private String heslo;
+
+    @Column(name = "Zablokovany")
+    private boolean zablokovany;
+
     @Embedded
     private Kontakt kontakt;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "pacient", cascade = CascadeType.ALL)
     private NastaveniUctu nastaveniUctu;
 
-    public Pacient() {
+    protected Pacient() {
 
     }
 
-    public Pacient(String cp, String jmena, String prijmeni, Kontakt kontakt) {
+    protected Pacient(String cp, String jmena, String prijmeni, Kontakt kontakt) {
         this.cp = requireNonNull(cp, "cp cannot be null");
         this.jmena = requireNonNull(jmena, "jmena cannot be null");
         this.prijmeni = requireNonNull(prijmeni, "jmena cannot be null");
         this.kontakt = requireNonNull(kontakt, "kontakt cannot be null");
     }
-
 
     public String getCp() {
         return cp;
@@ -79,5 +84,21 @@ public class Pacient extends BaseEntity {
 
     public void setNastaveniUctu(NastaveniUctu nastaveniUctu) {
         this.nastaveniUctu = nastaveniUctu;
+    }
+
+    public String getHeslo() {
+        return heslo;
+    }
+
+    public void setHeslo(String heslo) {
+        this.heslo = heslo;
+    }
+
+    public boolean isZablokovany() {
+        return zablokovany;
+    }
+
+    public void setZablokovany(boolean zablokovany) {
+        this.zablokovany = zablokovany;
     }
 }

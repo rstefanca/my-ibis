@@ -20,6 +20,8 @@ public class SimplePacientRequest {
 
     private Kontakt kontakt;
 
+    private String heslo;
+
     public String getCp() {
         return cp;
     }
@@ -52,5 +54,11 @@ public class SimplePacientRequest {
         this.kontakt = kontakt;
     }
 
+    public String getHeslo() {
+        return heslo;
+    }
 
+    public void setHeslo(String heslo) {
+        this.heslo = heslo;
+    }
 }

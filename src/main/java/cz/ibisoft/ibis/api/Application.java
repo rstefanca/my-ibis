@@ -24,7 +24,7 @@ public class Application {
     @Bean
     ApplicationRunner commandLineRunner(PacientRepository pacientRepository) {
         return args -> {
-            Pacient pacient = PacientFactory.createNewPacient("0000000001", "Test", "Testovic", "testovic@test.cz", "555444333");
+            Pacient pacient = PacientFactory.createNewPacient("0000000001", "Test", "Testovic", "testovic@test.cz", "555444333", "heslo");
             pacientRepository.save(pacient);
         };
     }

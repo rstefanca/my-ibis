@@ -1,6 +1,7 @@
 package cz.ibisoft.ibis.api.controllers;
 
 import cz.ibisoft.ibis.api.domain.NastaveniUctu;
+import cz.ibisoft.ibis.api.json.NastaveniUctuRequest;
 import cz.ibisoft.ibis.api.json.NastaveniUctuResponse;
 import cz.ibisoft.ibis.api.services.PacientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class UcetController {
 
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable String guid, @Valid @RequestBody NastaveniUctu nastaveniUctu) {
+    public void update(@PathVariable String guid, @Valid @RequestBody NastaveniUctuRequest nastaveniUctu) {
         pacientService.updateNastaveniUctu(
                 guid,
                 nastaveniUctu.getPreferovanaKomunikace(),
@@ -41,9 +42,9 @@ public class UcetController {
         NastaveniUctu nastaveniUctu = pacientService.loadPacientNastaveniUctu(guid);
         NastaveniUctuResponse response = aNastaveniUctu()
                 .withDobaUchovani(nastaveniUctu.getDobaUchovani())
-                .withPristupNaIdentifikatory(nastaveniUctu.getPreferovanaKomunikace())
-                .withZpusobPristupu(nastaveniUctu.getZpusobPristupu())
-                .withPreferovanaKomunikace(nastaveniUctu.getPreferovanaKomunikace())
+                .withPristupNaIdentifikatory(nastaveniUctu.getPristupNaIdentifikatory().toString())
+                .withZpusobPristupu(nastaveniUctu.getZpusobPristupu().toString())
+                .withPreferovanaKomunikace(nastaveniUctu.getPreferovanaKomunikace().toString())
                 .build();
 
         return ResponseEntity.ok(response);
