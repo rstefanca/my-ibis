@@ -1,8 +1,11 @@
 package cz.ibisoft.ibis.api.domain;
 
+import javax.persistence.Entity;
+
 /**
  * @author Richard Stefanca
  */
-public enum PristupNaIdentifikatory {
-    PREDEPSANE_VYDANE
+
+@Entity
+public class Karta {
 }
