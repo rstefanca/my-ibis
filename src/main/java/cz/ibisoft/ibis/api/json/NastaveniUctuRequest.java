@@ -1,15 +1,15 @@
 package cz.ibisoft.ibis.api.json;
 
-import cz.ibisoft.ibis.api.domain.PreferovanaKomunikace;
+import cz.ibisoft.ibis.api.domain.AccessType;
+import cz.ibisoft.ibis.api.domain.PreferredCommunication;
 import cz.ibisoft.ibis.api.domain.PristupNaIdentifikatory;
-import cz.ibisoft.ibis.api.domain.ZpusobPristupu;
 
 /**
  * @author Richard Stefanca
  */
 public class NastaveniUctuRequest {
 
-    private PreferovanaKomunikace preferovanaKomunikace;
+    private PreferredCommunication preferredCommunication;
 
 
     private Integer dobaUchovani;
@@ -17,14 +17,14 @@ public class NastaveniUctuRequest {
 
     private PristupNaIdentifikatory pristupNaIdentifikatory;
 
-    private ZpusobPristupu zpusobPristupu;
+    private AccessType accessType;
 
-    public PreferovanaKomunikace getPreferovanaKomunikace() {
-        return preferovanaKomunikace;
+    public PreferredCommunication getPreferredCommunication() {
+        return preferredCommunication;
     }
 
-    public void setPreferovanaKomunikace(PreferovanaKomunikace preferovanaKomunikace) {
-        this.preferovanaKomunikace = preferovanaKomunikace;
+    public void setPreferredCommunication(PreferredCommunication preferredCommunication) {
+        this.preferredCommunication = preferredCommunication;
     }
 
     public Integer getDobaUchovani() {
@@ -43,11 +43,11 @@ public class NastaveniUctuRequest {
         this.pristupNaIdentifikatory = pristupNaIdentifikatory;
     }
 
-    public ZpusobPristupu getZpusobPristupu() {
-        return zpusobPristupu;
+    public AccessType getAccessType() {
+        return accessType;
     }
 
-    public void setZpusobPristupu(ZpusobPristupu zpusobPristupu) {
-        this.zpusobPristupu = zpusobPristupu;
+    public void setAccessType(AccessType accessType) {
+        this.accessType = accessType;
     }
 }

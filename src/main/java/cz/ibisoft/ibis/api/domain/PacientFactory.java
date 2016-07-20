@@ -1,9 +1,9 @@
 package cz.ibisoft.ibis.api.domain;
 
 
-import static cz.ibisoft.ibis.api.domain.PreferovanaKomunikace.*;
+import static cz.ibisoft.ibis.api.domain.PreferredCommunication.*;
 import static cz.ibisoft.ibis.api.domain.PristupNaIdentifikatory.*;
-import static cz.ibisoft.ibis.api.domain.ZpusobPristupu.*;
+import static cz.ibisoft.ibis.api.domain.AccessType.*;
 
 /**
  * @author Richard Stefanca
@@ -23,12 +23,12 @@ public class PacientFactory {
      * @param mobil
      * @return instance pacienta
      */
-    public static Pacient createNewPacient(String cp, String jmena, String prijmeni, String email, String mobil, String heslo) {
-        Pacient pacient = new Pacient(cp, jmena, prijmeni, new Kontakt(email, mobil));
-        NastaveniUctu defaultNastaveniUctu = new NastaveniUctu(MOBILNI_APLIKACE, 1, PREDEPSANE_VYDANE, KARTA_PACIENTA);
-        defaultNastaveniUctu.setPacient(pacient);
-        pacient.setNastaveniUctu(defaultNastaveniUctu);
-        pacient.setHeslo(heslo);
-        return pacient;
+    public static Patient createNewPacient(String cp, String jmena, String prijmeni, String email, String mobil, String heslo) {
+        Patient patient = new Patient(cp, jmena, prijmeni, new Contact(email, mobil));
+        AccountSetting defaultAccountSetting = new AccountSetting(MOBILNI_APLIKACE, 1, PREDEPSANE_VYDANE, KARTA_PACIENTA);
+        defaultAccountSetting.setPatient(patient);
+        patient.setAccountSetting(defaultAccountSetting);
+        patient.setPassword(heslo);
+        return patient;
     }
 }

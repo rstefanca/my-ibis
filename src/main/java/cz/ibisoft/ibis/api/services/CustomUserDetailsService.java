@@ -1,7 +1,7 @@
 package cz.ibisoft.ibis.api.services;
 
-import cz.ibisoft.ibis.api.domain.Pacient;
-import cz.ibisoft.ibis.api.repositories.PacientRepository;
+import cz.ibisoft.ibis.api.domain.Patient;
+import cz.ibisoft.ibis.api.repositories.PatientRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -18,22 +18,22 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private PacientRepository pacientRepository;
+    private PatientRepository patientRepository;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        return pacientRepository
-                .findByKontaktEmail(userName)
+        return patientRepository
+                .findByContactEmail(userName)
                 .map(CustomUserDetailsService::getUser)
                 .orElseThrow(() -> new UsernameNotFoundException(userName));
     }
 
     @NotNull
-    private static User getUser(Pacient p) {
+    private static User getUser(Patient p) {
         return new User(
-                p.getKontakt().getEmail(),
-                p.getHeslo(),
-                !p.isZablokovany(),
+                p.getId(),
+                p.getPassword(),
+                p.isActive(),
                 true,
                 true,
                 true,

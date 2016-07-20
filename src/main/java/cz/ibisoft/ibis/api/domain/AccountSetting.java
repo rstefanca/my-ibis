@@ -10,13 +10,11 @@ import javax.persistence.*;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class NastaveniUctu extends BaseEntity {
+public class AccountSetting extends BaseEntity {
 
-
-
-    @Column(name = "PreferovanaKomunikace")
+    @Column(name = "PreferredCommunication")
     @Enumerated(EnumType.STRING)
-    private PreferovanaKomunikace preferovanaKomunikace;
+    private PreferredCommunication preferredCommunication;
 
     @Column(name = "DobaUchovaniIdentifikatoru")
     private Integer dobaUchovani;
@@ -25,32 +23,32 @@ public class NastaveniUctu extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PristupNaIdentifikatory pristupNaIdentifikatory;
 
-    @Column(name = "ZpusobPristupu")
+    @Column(name = "AccessType")
     @Enumerated(EnumType.STRING)
-    private ZpusobPristupu zpusobPristupu;
+    private AccessType accessType;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pacient_id", referencedColumnName = "id", nullable = false)
-    private Pacient pacient;
+    private Patient patient;
 
 
-    protected NastaveniUctu() {
+    protected AccountSetting() {
         //pro Hibernate
     }
 
-    public NastaveniUctu(PreferovanaKomunikace preferovanaKomunikace, Integer dobaUchovani, PristupNaIdentifikatory pristupNaIdentifikatory, ZpusobPristupu zpusobPristupu) {
-        this.preferovanaKomunikace = preferovanaKomunikace;
+    public AccountSetting(PreferredCommunication preferredCommunication, Integer dobaUchovani, PristupNaIdentifikatory pristupNaIdentifikatory, AccessType accessType) {
+        this.preferredCommunication = preferredCommunication;
         this.dobaUchovani = dobaUchovani;
         this.pristupNaIdentifikatory = pristupNaIdentifikatory;
-        this.zpusobPristupu = zpusobPristupu;
+        this.accessType = accessType;
     }
 
-    public PreferovanaKomunikace getPreferovanaKomunikace() {
-        return preferovanaKomunikace;
+    public PreferredCommunication getPreferredCommunication() {
+        return preferredCommunication;
     }
 
-    public void setPreferovanaKomunikace(PreferovanaKomunikace preferovanaKomunikace) {
-        this.preferovanaKomunikace = preferovanaKomunikace;
+    public void setPreferredCommunication(PreferredCommunication preferredCommunication) {
+        this.preferredCommunication = preferredCommunication;
     }
 
     public Integer getDobaUchovani() {
@@ -69,19 +67,19 @@ public class NastaveniUctu extends BaseEntity {
         this.pristupNaIdentifikatory = pristupNaIdentifikatory;
     }
 
-    public ZpusobPristupu getZpusobPristupu() {
-        return zpusobPristupu;
+    public AccessType getAccessType() {
+        return accessType;
     }
 
-    public void setZpusobPristupu(ZpusobPristupu zpusobPristupu) {
-        this.zpusobPristupu = zpusobPristupu;
+    public void setAccessType(AccessType accessType) {
+        this.accessType = accessType;
     }
 
-    public Pacient getPacient() {
-        return pacient;
+    public Patient getPatient() {
+        return patient;
     }
 
-    public void setPacient(Pacient pacient) {
-        this.pacient = pacient;
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
 }

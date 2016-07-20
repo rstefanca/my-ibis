@@ -26,8 +26,6 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 @Configuration
 public class OAuth2ServerConfiguration {
 
-
-
         private static final String RESOURCE_ID = "restservice";
 
         @Configuration
@@ -49,7 +47,7 @@ public class OAuth2ServerConfiguration {
                 http
                         .authorizeRequests()
                         //.antMatchers("/pacienti").hasRole("ADMIN")
-                        .antMatchers("/greeting").authenticated();
+                        .antMatchers("/me").authenticated();
                 // @formatter:on
             }
 

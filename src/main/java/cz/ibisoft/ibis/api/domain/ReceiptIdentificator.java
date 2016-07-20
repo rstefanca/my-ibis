@@ -6,6 +6,6 @@ import javax.persistence.Entity;
  * @author Richard Stefanca
  */
 
-@Entity
-public class Karta {
+//@Entity
+public class ReceiptIdentificator {
 }

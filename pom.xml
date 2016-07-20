@@ -81,13 +81,13 @@
 
     <repositories>
         <repository>
-            <id>spring-releases</id>
+            <code>spring-releases</code>
             <url>https://repo.spring.io/libs-release</url>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>spring-releases</id>
+            <code>spring-releases</code>
             <url>https://repo.spring.io/libs-release</url>
         </pluginRepository>
     </pluginRepositories>

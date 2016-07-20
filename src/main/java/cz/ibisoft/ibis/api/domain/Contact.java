@@ -8,7 +8,7 @@ import javax.persistence.Embeddable;
  */
 
 @Embeddable
-public class Kontakt {
+public class Contact {
 
     @Column
     private String email;
@@ -16,11 +16,11 @@ public class Kontakt {
     @Column
     private String mobil;
 
-    protected Kontakt() {
+    protected Contact() {
         //pro Hibernate
     }
 
-    public Kontakt(String email, String mobil) {
+    public Contact(String email, String mobil) {
         this.email = email;
         this.mobil = mobil;
     }
