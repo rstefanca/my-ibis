@@ -31,7 +31,6 @@ public class AccountSetting extends BaseEntity {
     @JoinColumn(name = "pacient_id", referencedColumnName = "id", nullable = false)
     private Patient patient;
 
-
     protected AccountSetting() {
         //pro Hibernate
     }
