@@ -1,6 +1,8 @@
 # my-ibis
 Test project
 
+TODO: popis projektu
+
 ##OAuth
 
 Získání tokenu pro testovacího uživatele
