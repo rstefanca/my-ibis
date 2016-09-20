@@ -1,6 +1,8 @@
 # my-ibis
 Test project
 
+Frontend ibis rest api
+
 ##OAuth
 
 Získání tokenu pro testovacího uživatele
