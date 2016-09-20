@@ -20,6 +20,4 @@ public class PatientCardResponse {
     public String getIssuer() {
         return issuer;
     }
-
-
 }
