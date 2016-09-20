@@ -1,7 +1,7 @@
 # my-ibis
 Test project
 
-TODO: popis projektu
+Frontend ibis rest api
 
 ##OAuth
 
