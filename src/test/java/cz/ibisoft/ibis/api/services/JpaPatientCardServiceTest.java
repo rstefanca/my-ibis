@@ -69,8 +69,4 @@ public class JpaPatientCardServiceTest {
         verify(patientCardRepository, times(1)).findCardsByPatientId(eq(PATIENT_ID));
 
     }
-
-
-
-
 }
